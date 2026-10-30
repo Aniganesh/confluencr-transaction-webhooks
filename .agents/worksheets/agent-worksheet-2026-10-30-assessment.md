@@ -1,6 +1,6 @@
 # Confluencr backend assessment
 
-Status: ACTIVE
+Status: COMPLETE
 
 ## Scope and authorization
 
@@ -38,4 +38,6 @@ Status: ACTIVE
 - Final artifacts: source ZIP, combined verification JSON and PDF-inspection JSON under the chat's `outputs/` folder. Reports are also included under repository `reports/`.
 - Handoff: Docker Compose API, worker and PostgreSQL are running locally, API tester at http://localhost:8000/docs. README covers startup, tests, architecture, scope, limits and later cloud configuration.
 - Cloud deployment remains deferred; user will choose a hosting target after testing.
-- Next: stage reviewed source, commit on `main`, create the user's public GitHub repository, push, verify the remote repository and CI run, then update this worksheet to COMPLETE.
+- Published public repository: `https://github.com/Aniganesh/confluencr-transaction-webhooks`, default branch `main`.
+- Initial source commit `3a98b1a5f44ef26b9a6f688374b336def0e678ae` was pushed successfully. GitHub Actions workflow `Verify` was queued on that revision.
+- No deployment or public API endpoint was created; deployment remains for the user to select after testing.
