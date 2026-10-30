@@ -81,7 +81,7 @@ flowchart LR
 ```
 
 - **FastAPI and async Psycopg pools:** short database operations on the request path, validation, generated API documentation, and bounded connections. The 30-second delay never occupies an API worker.
-- **One PostgreSQL row is both transaction and queue entry:** inserting the transaction durably schedules the job in the same statement. There is no database/broker dual write. `DATABASE_URL` can point at managed cloud PostgreSQL when deployment is chosen.
+- **One PostgreSQL row is both transaction and queue entry:** inserting the transaction durably schedules the job in the same statement. There is no database/broker dual write. `DATABASE_URL` connects both the API and worker to managed PostgreSQL.
 - **Durable 30-second delay:** PostgreSQL sets `ready_at = created_at + 30 seconds`. Workers only complete rows whose deadline has passed. Persisting the timer avoids sleeping while holding a task or connection, survives process restarts, and allows many transactions to wait concurrently. The simulation consists of the required delay followed by the persisted completion; no payment is moved and no external API is called.
 - **Atomic completion:** workers claim due rows with `FOR UPDATE SKIP LOCKED` and update the result in the same short transaction. Several workers can run concurrently. A crash before commit rolls back; a crash after commit leaves a processed row that will not be selected again. Database constraints disallow early completion or inconsistent status/timestamps.
 - **Retry without loss:** a transient worker error rolls back the batch and retries with exponential backoff up to 10 seconds. No job is silently discarded after a retry limit. API and worker processes restart independently. Pending jobs resume when a worker returns; overdue jobs process immediately.
@@ -158,7 +158,13 @@ The assessment endpoints are unauthenticated. Before using a real payment source
 
 ## Deployment status
 
-The application source is published in this GitHub repository. No cloud service or public API endpoint is deployed. The image supports separate API and worker processes against managed PostgreSQL; the hosting target, cloud database and production secrets remain to be selected.
+The API and worker are deployed as separate Northflank services sharing a persistent PostgreSQL addon:
+
+- **Public API / health:** https://p01--confluencr-webhook-demo--wrj6twgtmvhr.code.run/
+- **Interactive API tester:** https://p01--confluencr-webhook-demo--wrj6twgtmvhr.code.run/docs
+- **Worker:** `confluencr-worker`, running `python -m app.worker` with the same database as the API.
+
+The migration job completed before the API was restarted. A fresh live transaction was initially `PROCESSING` and completed after **30.043156 seconds**. Repeated deliveries after completion retained all original values and timestamps. A repeated POST using an existing HTTP connection returned 202 in **188.758ms** from the test client. The first request took longer because its total included connection and TLS setup; this check is not a cloud load benchmark. Full evidence is in `reports/worker-verification.json`.
 
 ## Verified locally on 30 October 2026
 
@@ -166,4 +172,4 @@ The application source is published in this GitHub repository. No cloud service 
 - Actual HTTP load: 200 unique transactions, 21 duplicate deliveries, concurrency 20; acknowledgment p50 29.751ms, p95 111.657ms, maximum 171.449ms. All results completed after 30.003–30.117 seconds.
 - Worker SIGKILL, API restart and database stop/start recovery passed. An attempted delivery during the database outage returned 503 in 3.483ms; its retry completed after recovery.
 - Lint, formatting, lock consistency, container build, OpenAPI and Swagger tester checks passed.
-- Machine-readable results and PDF inspection evidence are in `reports/`. CI is configured but has not run on GitHub because the repository has not been published.
+- Machine-readable results and PDF inspection evidence are in `reports/`. [GitHub Actions passed for implementation commit `6fa1fbf`](https://github.com/Aniganesh/confluencr-transaction-webhooks/actions/runs/41036636308).

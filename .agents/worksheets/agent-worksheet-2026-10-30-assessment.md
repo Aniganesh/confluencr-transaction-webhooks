@@ -37,7 +37,11 @@ Status: COMPLETE
 - Ruff lint and formatting, lock consistency, OpenAPI schema and Swagger tester checks passed.
 - Final artifacts: source ZIP, combined verification JSON and PDF-inspection JSON under the chat's `outputs/` folder. Reports are also included under repository `reports/`.
 - Handoff: Docker Compose API, worker and PostgreSQL are running locally, API tester at http://localhost:8000/docs. README covers startup, tests, architecture, scope, limits and later cloud configuration.
-- Cloud deployment remains deferred; user will choose a hosting target after testing.
+- The user subsequently authorized migration execution, API redeployment and a worker deployment on Northflank.
 - Published public repository: `https://github.com/Aniganesh/confluencr-transaction-webhooks`, default branch `main`.
 - Initial source commit `3a98b1a5f44ef26b9a6f688374b336def0e678ae` was pushed successfully. GitHub Actions workflow `Verify` was queued on that revision.
-- No deployment or public API endpoint was created; deployment remains for the user to select after testing.
+- Northflank migration build `keen-spot-8004` and run `8ef56b0f-ceb4-4172-b653-a92bca753a95` succeeded; API restarted with 1/1 health checks passing.
+- Worker `confluencr-worker` reuses API image `steadfast-tiger-8015`, command `python -m app.worker`, one free 256 MB instance, no ports, and a directly copied API DATABASE_URL (credentials never stored in this repository).
+- Live transaction `txn_cloud_5b678d8964bb4c178ed26d49d7c43ff9` completed in 30.043156s. Replays preserved the completed record and timestamps; a warm HTTP POST returned 202 in 188.758ms. Evidence: `reports/worker-verification.json`.
+- Public API: https://p01--confluencr-webhook-demo--wrj6twgtmvhr.code.run/ ; interactive tester: append `/docs`.
+- Worker-verification heartbeat was disabled after completion. GitHub implementation CI passed. Documentation and source archive refreshed for the authorized assessment submission.

@@ -1,5 +1,6 @@
 {
   "project": "Confluencr transaction webhook assessment",
+  "scope": "Local verification before cloud deployment; later live results are in worker-verification.json",
   "verified_at": "2026-10-30T14:46:35.625085+05:30",
   "stack": [
     "Python 3.12",
@@ -71,11 +72,11 @@
     },
     "containers": "API healthy, PostgreSQL healthy, worker running"
   },
-  "deployment": "Not performed; user will select hosting after review",
-  "publication": "Source repository published on GitHub; no public API endpoint deployed; CI configured for push/pull requests",
+  "deployment": "API, worker, migration job and PostgreSQL deployed on Northflank after this local verification; see worker-verification.json",
+  "publication": "Source repository published on GitHub; implementation CI passed; public API and interactive docs are linked in README",
   "limitations": [
     "Load measurements describe this local workload; no unlimited-load or network-latency guarantee.",
     "Exactly-once applies to the committed database result in the simulation. Real provider side effects require provider idempotency.",
-    "Cloud PostgreSQL is supported via DATABASE_URL; no cloud resources provisioned."
+    "The separate live worker report verifies processing and duplicate handling; it is not a cloud load benchmark."
   ]
 }

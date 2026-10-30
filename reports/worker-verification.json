@@ -1,0 +1,53 @@
+{
+  "verified_at": "2026-10-30T11:02:40.681722+00:00",
+  "worker_service": "confluencr-worker",
+  "worker_command": "python -m app.worker",
+  "same_database_as_api": true,
+  "image_build": "steadfast-tiger-8015",
+  "transaction_id": "txn_cloud_5b678d8964bb4c178ed26d49d7c43ff9",
+  "initial_status": {
+    "transaction_id": "txn_cloud_5b678d8964bb4c178ed26d49d7c43ff9",
+    "source_account": "acc_user_789",
+    "destination_account": "acc_merchant_456",
+    "amount": 1500.0,
+    "currency": "INR",
+    "status": "PROCESSING",
+    "created_at": "2026-10-30T10:57:37.887242Z",
+    "processed_at": null
+  },
+  "final_status": {
+    "transaction_id": "txn_cloud_5b678d8964bb4c178ed26d49d7c43ff9",
+    "source_account": "acc_user_789",
+    "destination_account": "acc_merchant_456",
+    "amount": 1500.0,
+    "currency": "INR",
+    "status": "PROCESSED",
+    "created_at": "2026-10-30T10:57:37.887242Z",
+    "processed_at": "2026-10-30T10:58:07.930398Z"
+  },
+  "processing_delay_seconds": 30.043156,
+  "acknowledgment_http_status": 202,
+  "initial_curl_total_ms_including_network_and_tls": 646.977,
+  "result": "PASS",
+  "scope": "Live worker processing and duplicate prevention; this is not a cloud load benchmark",
+  "live_duplicate_prevention": "PASS: repeated completed transaction retained all original values and timestamps",
+  "warm_connection_acknowledgment_ms": 188.758,
+  "curl_profiles": [
+    {
+      "http_code": 202,
+      "seconds": 0.599694,
+      "new_connections": 1
+    },
+    {
+      "http_code": 202,
+      "seconds": 0.188758,
+      "new_connections": 0
+    },
+    {
+      "http_code": 200,
+      "seconds": 0.191239,
+      "new_connections": 0
+    }
+  ],
+  "timing_note": "The first request includes network and TLS connection setup. The second POST reused the connection."
+}
