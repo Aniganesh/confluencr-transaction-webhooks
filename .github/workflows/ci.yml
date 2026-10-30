@@ -1,0 +1,32 @@
+name: Verify
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: webhooks
+          POSTGRES_PASSWORD: webhooks
+          POSTGRES_DB: webhooks
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U webhooks -d webhooks"
+          --health-interval 2s --health-timeout 2s --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest -q -s
+      - name: Check container build
+        run: docker build -t confluencr-webhooks:ci .

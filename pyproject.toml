@@ -1,0 +1,33 @@
+[project]
+name = "confluencr-transaction-webhooks"
+version = "1.0.0"
+description = "Durable, idempotent transaction webhook processing"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+    "psycopg[binary,pool]>=3.2,<4",
+    "pydantic-settings>=2.7,<3",
+    "simplejson>=3.19,<4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<10",
+    "pytest-asyncio>=0.25,<2",
+    "httpx>=0.28,<1",
+    "ruff>=0.9,<1",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = ["slow: real thirty-second timing and load test"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]

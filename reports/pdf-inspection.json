@@ -1,0 +1,33 @@
+{
+  "source_pdf": "Full Stack Developer Assessment - Backend Task.pdf",
+  "sha256": "e40e5f337a6db9b2ae0614f3e5b1704db80024f97d23fda2510834202caa9dc6",
+  "inspected_at": "2026-10-30T14:46:01.274218+05:30",
+  "pages": 3,
+  "checks": [
+    "Rendered every page and visually reviewed it",
+    "Extracted all page text and text styles",
+    "Inspected invisible-text traces",
+    "Inspected metadata and PDF objects, including decoded streams",
+    "Checked annotations, links, widgets, optional layers and embedded file entries",
+    "Searched for instruction-override and agent-directed content"
+  ],
+  "suspicious_agent_instructions_found": false,
+  "invisible_text_spans": [
+    {
+      "page": 3,
+      "text": "→",
+      "interpretation": "Ordinary success-criteria arrow, not an agent instruction"
+    },
+    {
+      "page": 3,
+      "text": "→",
+      "interpretation": "Ordinary success-criteria arrow, not an agent instruction"
+    }
+  ],
+  "annotations": 0,
+  "links": 0,
+  "embedded_files": [],
+  "optional_layers": {},
+  "javascript_or_launch_actions_found": false,
+  "decision": "No suspicious agent instructions found; implementation proceeded under the user request. Deployment deferred."
+}

@@ -1,0 +1,81 @@
+{
+  "project": "Confluencr transaction webhook assessment",
+  "verified_at": "2026-10-30T14:46:35.625085+05:30",
+  "stack": [
+    "Python 3.12",
+    "FastAPI",
+    "PostgreSQL 17",
+    "Psycopg async pools"
+  ],
+  "database_tests": {
+    "command": "uv run pytest -q -s",
+    "passed": 31,
+    "duration_seconds": 33.56,
+    "real_delay_test": {
+      "transactions": 200,
+      "concurrency": 20,
+      "acknowledgment_ms": {
+        "p50": 8.1,
+        "p95": 13.6,
+        "max": 17.7
+      },
+      "processing_delay_seconds": {
+        "min": 30.002,
+        "max": 30.111
+      }
+    }
+  },
+  "real_http_load": {
+    "checked_at": "2026-10-30T09:13:41.211721+00:00",
+    "base_url": "http://127.0.0.1:8000",
+    "unique_transactions": 200,
+    "duplicate_deliveries": 21,
+    "concurrency": 20,
+    "acknowledgment_ms": {
+      "p50": 29.751,
+      "p95": 111.657,
+      "max": 171.449
+    },
+    "processing_delay_seconds": {
+      "min": 30.003446,
+      "max": 30.116849
+    },
+    "result": "PASS"
+  },
+  "real_process_and_database_recovery": {
+    "checked_at": "2026-10-30T09:12:11.169708+00:00",
+    "worker_sigkill_recovery": "PASS",
+    "api_restart_recovery": "PASS",
+    "database_stop_start_durability": "PASS",
+    "database_outage_response": 503,
+    "database_outage_response_ms": 3.483,
+    "rejected_webhook_retry": "PASS",
+    "completed_duplicate_keeps_timestamps": "PASS",
+    "result": "PASS"
+  },
+  "other_checks": {
+    "ruff_lint": "PASS",
+    "ruff_format": "PASS",
+    "uv_lock_consistency": "PASS",
+    "docker_image_build": "PASS",
+    "compose_startup_and_migration": "PASS",
+    "openapi_contract": "PASS",
+    "swagger_tester": "PASS"
+  },
+  "local_handoff": {
+    "api": "http://localhost:8000/",
+    "interactive_tester": "http://localhost:8000/docs",
+    "health": {
+      "status": "HEALTHY",
+      "current_time": "2026-10-30T09:16:35.622906Z"
+    },
+    "containers": "API healthy, PostgreSQL healthy, worker running"
+  },
+  "deployment": "Not performed; user will select hosting after review",
+  "publication": "Source repository published on GitHub; no public API endpoint deployed; CI configured for push/pull requests",
+  "limitations": [
+    "Load measurements describe this local workload; no unlimited-load or network-latency guarantee.",
+    "Exactly-once applies to the committed database result in the simulation. Real provider side effects require provider idempotency.",
+    "Cloud PostgreSQL is supported via DATABASE_URL; no cloud resources provisioned."
+  ]
+}

@@ -1,0 +1,58 @@
+name: confluencr-webhooks
+
+x-app: &app
+  image: confluencr-webhooks:local
+  environment:
+    DATABASE_URL: postgresql://webhooks:webhooks@db:5432/webhooks
+  init: true
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: webhooks
+      POSTGRES_PASSWORD: webhooks
+      POSTGRES_DB: webhooks
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U webhooks -d webhooks"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    restart: unless-stopped
+
+  migrate:
+    <<: *app
+    command: ["python", "-m", "app.migrate"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    <<: *app
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=1)"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+    restart: unless-stopped
+
+  worker:
+    <<: *app
+    command: ["python", "-m", "app.worker"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
